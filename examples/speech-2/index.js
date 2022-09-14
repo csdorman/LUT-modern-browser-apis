@@ -10,22 +10,16 @@ const speed = document.getElementById("speed")
 let speedRate = speed.value
 const pitch = document.getElementById("pitch")
 let pitchRate = pitch.value
-
-// const voiceList = synth.getVoices().forEach((voice) => {
-// 	const newVoice = voice
-// 	voice.textContent = `${voice.name}`
-// })
-//console.log(voiceList)
-//console.log("Console getVoices", synth.getVoices())
-
-//MDN Code
+//Empty array for voices
+let voices = []
 
 function populateVoiceList() {
-	const voices = synth.getVoices()
-
+	voices = synth.getVoices()
+	console.log(voices)
 	for (let i = 0; i < voices.length; i++) {
 		const option = document.createElement("option")
 		option.textContent = `${voices[i].name} (${voices[i].lang})`
+		console.log(option)
 
 		if (voices[i].default) {
 			option.textContent += " — DEFAULT"
@@ -37,23 +31,19 @@ function populateVoiceList() {
 	}
 }
 populateVoiceList()
-//
 
 // Speed change
 speed.onchange = function () {
-	console.log("Speed changed", speed, speedRate)
 	speedRate = speed.value
 }
 
 // Pitch change
 pitch.onchange = function () {
-	console.log("Pitch change", pitch, pitchRate)
 	pitchRate = pitch.value
 }
 
 // Speak/Pause/Stop Voice
 speakButton.addEventListener("click", () => {
-	console.log("Speech activated")
 	const utterance = new SpeechSynthesisUtterance(speakInput.value) // create utterance
 	utterance.rate = speedRate // set speed
 	utterance.pitch = pitchRate // set pitch
