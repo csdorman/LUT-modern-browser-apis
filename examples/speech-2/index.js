@@ -1,10 +1,15 @@
+//Speech Synthesis Functionality
 const synth = window.speechSynthesis
+//Buttons
 const speakButton = document.getElementById("speak")
 const speakInput = document.getElementById("speak-text")
 const stopButton = document.getElementById("stop")
-const speedRate = document.getElementById("speed")
-const pitchRate = document.getElementById("pitch")
 const voiceSelect = document.getElementById("voice")
+//Rate and Pitch
+const speed = document.getElementById("speed")
+let speedRate = speed.value
+const pitch = document.getElementById("pitch")
+let pitchRate = pitch.value
 
 // const voiceList = synth.getVoices().forEach((voice) => {
 // 	const newVoice = voice
@@ -16,7 +21,7 @@ const voiceSelect = document.getElementById("voice")
 //MDN Code
 
 function populateVoiceList() {
-	voices = synth.getVoices()
+	const voices = synth.getVoices()
 
 	for (let i = 0; i < voices.length; i++) {
 		const option = document.createElement("option")
@@ -34,10 +39,24 @@ function populateVoiceList() {
 populateVoiceList()
 //
 
+// Not working
+speed.onchange = function () {
+	console.log("Speed changed", speed, speedRate)
+	speedRate = speed.value
+}
+
+// Pitch change
+pitch.onchange = function () {
+	console.log("Pitch change", pitch, pitchRate)
+	pitchRate = pitch.value
+}
+
 // Speak/Pause/Stop Voice
 speakButton.addEventListener("click", () => {
 	console.log("Speech activated")
-	const utterance = new SpeechSynthesisUtterance(speakInput.value)
+	const utterance = new SpeechSynthesisUtterance(speakInput.value) // create utterance
+	utterance.speed = speedRate // set speed
+	utterance.pitch = pitchRate // set pitch
 	if (synth.paused) {
 		synth.resume()
 		speakButton.innerText = "Pause Speech"
