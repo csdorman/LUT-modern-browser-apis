@@ -39,7 +39,7 @@ function populateVoiceList() {
 populateVoiceList()
 //
 
-// Not working
+// Speed change
 speed.onchange = function () {
 	console.log("Speed changed", speed, speedRate)
 	speedRate = speed.value
@@ -55,7 +55,7 @@ pitch.onchange = function () {
 speakButton.addEventListener("click", () => {
 	console.log("Speech activated")
 	const utterance = new SpeechSynthesisUtterance(speakInput.value) // create utterance
-	utterance.speed = speedRate // set speed
+	utterance.rate = speedRate // set speed
 	utterance.pitch = pitchRate // set pitch
 	if (synth.paused) {
 		synth.resume()
