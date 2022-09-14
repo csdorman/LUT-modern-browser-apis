@@ -1,28 +1,56 @@
 const synth = window.speechSynthesis
-const speakBtn = document.getElementById('speak')
-const stopBtn = document.getElementById('stop')
-const textBox = document.getElementById('speak-text')
-const voiceSelect = document.getElementById('voice')
-const speed = document.getElementById('speed')
-let speedRate = speed.value
-const pitch = document.getElementById('pitch')
-let pitchRate = pitch.value
+const speakButton = document.getElementById("speak")
+const speakInput = document.getElementById("speak-text")
+const stopButton = document.getElementById("stop")
+const speedRate = document.getElementById("speed")
+const pitchRate = document.getElementById("pitch")
+const voiceSelect = document.getElementById("voice")
 
-speakBtn.addEventListener('click', () => {
-	console.log("Button clicked:", speakBtn)
-	const utterance = new SpeechSynthesisUtterance(textBox.value)
-	console.log("Speech utterance", utterance)
-	console.log(speed, speedRate, pitch, pitchRate)
-	utterance.speed = speedRate
-	utterance.pitch = pitchRate
-	synth.speak(utterance)
+// const voiceList = synth.getVoices().forEach((voice) => {
+// 	const newVoice = voice
+// 	voice.textContent = `${voice.name}`
+// })
+//console.log(voiceList)
+//console.log("Console getVoices", synth.getVoices())
+
+//MDN Code
+
+function populateVoiceList() {
+	voices = synth.getVoices()
+
+	for (let i = 0; i < voices.length; i++) {
+		const option = document.createElement("option")
+		option.textContent = `${voices[i].name} (${voices[i].lang})`
+
+		if (voices[i].default) {
+			option.textContent += " — DEFAULT"
+		}
+
+		option.setAttribute("data-lang", voices[i].lang)
+		option.setAttribute("data-name", voices[i].name)
+		voiceSelect.appendChild(option)
+	}
+}
+populateVoiceList()
+//
+
+// Speak/Pause/Stop Voice
+speakButton.addEventListener("click", () => {
+	console.log("Speech activated")
+	const utterance = new SpeechSynthesisUtterance(speakInput.value)
+	if (synth.paused) {
+		synth.resume()
+		speakButton.innerText = "Pause Speech"
+	} else if (synth.speaking) {
+		synth.pause()
+		speakButton.innerText = "Resume Speach"
+	} else {
+		synth.speak(utterance)
+		speakButton.innerText = "Pause Speaking"
+	}
+	utterance.addEventListener("end", () => {
+		if (!synth.speaking) {
+			speakButton.innerText = "Speak Input Text"
+		}
+	})
 })
-
-pitch.onchange = function () {
-	pitchRate = pitch.value
-}
-
-speed.onchange = function () {
-	speedRate = speed.value
-}
-
