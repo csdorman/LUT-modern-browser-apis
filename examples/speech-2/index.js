@@ -4,22 +4,23 @@ const synth = window.speechSynthesis
 const speakButton = document.getElementById("speak")
 const speakInput = document.getElementById("speak-text")
 const stopButton = document.getElementById("stop")
-const voiceSelect = document.getElementById("voice")
 //Rate and Pitch
 const speed = document.getElementById("speed")
 let speedRate = speed.value
 const pitch = document.getElementById("pitch")
 let pitchRate = pitch.value
-//Empty array for voices
-let voices = []
+//Voice Options
+let voices = [] //empty for voice list
+const voiceSelect = document.getElementById("voice")
+let selectedVoice = null
 
 function populateVoiceList() {
 	voices = synth.getVoices()
-	console.log(voices)
+	console.log("Voices", voices)
+	console.log("onvoiceschanged:", synth.onvoiceschanged)
 	for (let i = 0; i < voices.length; i++) {
 		const option = document.createElement("option")
 		option.textContent = `${voices[i].name} (${voices[i].lang})`
-		console.log(option)
 
 		if (voices[i].default) {
 			option.textContent += " — DEFAULT"
@@ -31,6 +32,12 @@ function populateVoiceList() {
 	}
 }
 populateVoiceList()
+if (
+	typeof speechSynthesis !== "undefined" &&
+	speechSynthesis.onvoiceschanged !== undefined
+) {
+	speechSynthesis.onvoiceschanged = populateVoiceList
+}
 
 // Speed change
 speed.onchange = function () {
@@ -42,11 +49,23 @@ pitch.onchange = function () {
 	pitchRate = pitch.value
 }
 
+voiceSelect.onchange = function () {
+	selectedVoice = voiceSelect.value
+}
+
 // Speak/Pause/Stop Voice
 speakButton.addEventListener("click", () => {
 	const utterance = new SpeechSynthesisUtterance(speakInput.value) // create utterance
+	const selectedOption =
+		voiceSelect.selectedOptions[0].getAttribute("data-name")
+	console.log(selectedOption)
 	utterance.rate = speedRate // set speed
 	utterance.pitch = pitchRate // set pitch
+	for (let i = 0; i < voices.length; i++) {
+		if (voices[i].name === selectedOption) utterance.voice = voices[i]
+	}
+	utterance.voice = selectedOption // set voice
+	console.log("Utterance: ", utterance)
 	if (synth.paused) {
 		synth.resume()
 		speakButton.innerText = "Pause Speech"
