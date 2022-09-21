@@ -12,7 +12,6 @@ let pitchRate = pitch.value
 //Voice Options
 let voices = [] //empty for voice list
 const voiceSelect = document.getElementById("voice")
-let selectedVoice = null
 
 function populateVoiceList() {
 	voices = synth.getVoices()
@@ -49,22 +48,15 @@ pitch.onchange = function () {
 	pitchRate = pitch.value
 }
 
-voiceSelect.onchange = function () {
-	selectedVoice = voiceSelect.value
-}
-
 // Speak/Pause/Stop Voice
 speakButton.addEventListener("click", () => {
 	const utterance = new SpeechSynthesisUtterance(speakInput.value) // create utterance
-	const selectedOption =
-		voiceSelect.selectedOptions[0].getAttribute("data-name")
-	console.log(selectedOption)
-	utterance.rate = speedRate // set speed
+	const selectedOption = voiceSelect.selectedIndex
+	console.log(voiceSelect, selectedOption)
+	utterance.voice = voices[selectedOption] // set voice
 	utterance.pitch = pitchRate // set pitch
-	for (let i = 0; i < voices.length; i++) {
-		if (voices[i].name === selectedOption) utterance.voice = voices[i]
-	}
-	utterance.voice = selectedOption // set voice
+	utterance.rate = speedRate // set speed
+	console.log(pitchRate, speedRate)
 	console.log("Utterance: ", utterance)
 	if (synth.paused) {
 		synth.resume()
